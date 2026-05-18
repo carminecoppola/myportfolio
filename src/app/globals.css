@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-black text-zinc-100 antialiased;
+    font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: 0.01em;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      ellipse at 20% 50%,
+      rgba(0, 217, 255, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 80% 80%,
+      rgba(204, 255, 0, 0.03) 0%,
+      transparent 50%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight;
+    letter-spacing: -0.015em;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+
+  code,
+  pre {
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+  }
+
+  /* Smooth scrolling for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .link-subtle {
+    @apply text-zinc-300 hover:text-white transition-colors;
+  }
+
+  .btn-primary {
+    @apply px-6 py-2 bg-white text-black hover:bg-zinc-100 transition-all duration-200 rounded font-semibold hover:shadow-lg hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-2 bg-zinc-800 text-white hover:bg-zinc-700 transition-all duration-200 rounded border border-zinc-700 hover:border-zinc-500 hover:shadow-md;
+  }
+
+  /* Gradient Text */
+  .text-gradient-cyan-lime {
+    background: linear-gradient(90deg, #00d9ff 0%, #ccff00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-orange {
+    background: linear-gradient(90deg, #ff6b35 0%, #ff9f5a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-purple {
+    background: linear-gradient(90deg, #a855f7 0%, #d946ef 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Accent Line */
+  .accent-line {
+    @apply h-1 rounded-full;
+  }
+
+  .accent-line-cyan {
+    @apply bg-gradient-to-r from-cyan-400 to-cyan-600;
+  }
+
+  .accent-line-lime {
+    @apply bg-gradient-to-r from-lime-400 to-lime-600;
+  }
+
+  .accent-line-orange {
+    @apply bg-gradient-to-r from-orange-500 to-red-600;
+  }
+
+  /* Status Badge */
+  .status-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-900/50 border border-lime-400/50 rounded-full text-sm text-lime-300 font-medium;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 bg-lime-400 rounded-full animate-pulse;
+  }
+
+  /* Glow Effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+  }
+
+  .glow-lime {
+    box-shadow: 0 0 20px rgba(204, 255, 0, 0.3);
+  }
+
+  .glow-orange {
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.8s ease-out;
+  }
+
+  .animate-glow-pulse {
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+}
