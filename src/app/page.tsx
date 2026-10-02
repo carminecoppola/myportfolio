@@ -1,72 +1,34 @@
-import Hero from "@/components/Hero";
-import Section from "@/components/Section";
-import ProjectCard from "@/components/ProjectCard";
-import Publications from "@/components/Publications";
-import Skills from "@/components/Skills";
+import About from "@/components/About";
 import Contact from "@/components/Contact";
-import { projects, about } from "@/data/profile";
+import Hero from "@/components/Hero";
+import Nav from "@/components/Nav";
+import Research from "@/components/Research";
+import Work from "@/components/Work";
+import { profile } from "@/data/profile";
 
 export default function Home() {
   return (
-    <main className="bg-black">
-      {/* Hero Section */}
-      <Hero />
-
-      {/* Featured Projects */}
-      <Section
-        id="projects"
-        title="Featured Projects"
-        subtitle="Research and engineering work across ML, HPC, and scientific computing"
+    <>
+      <a
+        href="#work"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded focus:bg-[var(--ink)] focus:px-4 focus:py-2 focus:text-[var(--bg)]"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Research & Publications */}
-      <Section
-        id="publications"
-        title="Research & Publications"
-        subtitle="Academic contributions and research projects"
-      >
-        <Publications />
-      </Section>
-
-      {/* About */}
-      <Section
-        id="about"
-        title="About"
-      >
-        <div className="max-w-2xl space-y-8 text-zinc-300">
-          <p className="text-lg leading-relaxed border-l-4 border-orange-400/50 pl-6 py-2 hover:border-orange-400 transition-all duration-300">
-            {about.intro}
-          </p>
-          <p className="text-lg leading-relaxed border-l-4 border-cyan-400/50 pl-6 py-2 hover:border-cyan-400 transition-all duration-300">
-            {about.experience}
-          </p>
-          <p className="text-lg leading-relaxed border-l-4 border-lime-400/50 pl-6 py-2 hover:border-lime-400 transition-all duration-300">
-            {about.interests}
-          </p>
-        </div>
-      </Section>
-
-      {/* Skills */}
-      <Section
-        id="skills"
-        title="Skills & Expertise"
-      >
-        <Skills />
-      </Section>
-
-      {/* Contact */}
-      <Section
-        id="contact"
-        title="Get in Touch"
-      >
+        Skip to content
+      </a>
+      <Nav />
+      <main>
+        <Hero />
+        <Work />
+        <Research />
+        <About />
         <Contact />
-      </Section>
-    </main>
+      </main>
+      <footer className="border-t border-[var(--line)] py-8">
+        <div className="wrap eyebrow flex flex-wrap justify-between gap-4">
+          <span>© {new Date().getFullYear()} {profile.name}</span>
+          <span>Built with Next.js · set in Instrument Serif and Geist</span>
+        </div>
+      </footer>
+    </>
   );
 }

@@ -1,14 +1,4 @@
-# Allow all crawlers
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://carminecoppola.dev/sitemap.xml
-
-# Allow specific paths
-Allow: /
-
-# Disallow admin/private paths
-Disallow: /admin/
-Disallow: /.env*
-Disallow: /.next/
+Sitemap: https://carminecoppola-portfolio.vercel.app/sitemap.xml

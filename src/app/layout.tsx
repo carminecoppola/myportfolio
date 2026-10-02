@@ -1,104 +1,64 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { profile } from "@/data/profile";
 import "./globals.css";
 
-const siteUrl = "https://carminecoppola.dev"; // Update with your domain
-const siteTitle = "Carmine Coppola - ML & HPC Engineer";
-const siteDescription =
-  "Professional portfolio of Carmine Coppola. Machine Learning, Computer Vision, HPC, GPU Optimization, and AI Research Engineer.";
-const siteImage = `${siteUrl}/og-image.jpg`; // Optional: add OG image later
+const display = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
+  display: "swap",
+});
+const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
+
+const siteUrl = "https://carminecoppola-portfolio.vercel.app";
+const title = "Carmine Coppola — Machine learning and HPC";
+const description =
+  "Research fellow working on edge vision, high-performance computing and the evaluation of machine learning systems. Naples, Italy.";
 
 export const metadata: Metadata = {
-  title: siteTitle,
-  description: siteDescription,
-  authors: [
-    {
-      name: "Carmine Coppola",
-      url: "https://github.com/carminecoppola",
-    },
-  ],
-  keywords: [
-    "Machine Learning",
-    "Computer Vision",
-    "HPC",
-    "GPU Optimization",
-    "AI Research",
-    "Scientific Computing",
-    "Software Engineering",
-    "Deep Learning",
-    "Neural Networks",
-    "Python",
-    "C++",
-    "TensorFlow",
-    "CUDA",
-    "MPI",
-  ],
-  creator: "Carmine Coppola",
-  category: "Technology, Research, Engineering",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: siteTitle,
-    title: siteTitle,
-    description: siteDescription,
-    images: [
-      {
-        url: siteImage,
-        width: 1200,
-        height: 630,
-        alt: siteTitle,
-        type: "image/jpeg",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteTitle,
-    description: siteDescription,
-    creator: "@carminecoppola", // Update with your Twitter handle if you have one
-    images: [siteImage],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-snippet": -1,
-      "max-image-preview": "large",
-      "max-video-preview": -1,
-    },
-  },
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
+  authors: [{ name: profile.name, url: profile.github }],
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", url: siteUrl, siteName: profile.name, title, description, locale: "en_US" },
+  twitter: { card: "summary_large_image", title, description },
+  robots: { index: true, follow: true },
   manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: siteTitle,
-  },
-  formatDetection: {
-    telephone: false,
-  },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f3f0e9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0e0c" },
+  ],
+};
+
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t}catch(e){}})()`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: profile.name,
+  url: siteUrl,
+  jobTitle: "Research Fellow",
+  affiliation: { "@type": "CollegeOrUniversity", name: "University of Naples Parthenope" },
+  address: { "@type": "PostalAddress", addressLocality: "Naples", addressCountry: "IT" },
+  sameAs: [profile.github, profile.linkedin],
+  knowsAbout: ["Machine learning", "Computer vision", "High-performance computing", "Edge computing"],
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <head>
-        <meta name="theme-color" content="#000000" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href={siteUrl} />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body>
-        <div className="min-h-screen bg-black text-zinc-100">
-          {children}
-        </div>
-      </body>
+      <body className="grain">{children}</body>
     </html>
   );
 }
