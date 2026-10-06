@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AnimatePresence, animate, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 import { projects, type Metric, type Project } from "@/data/profile";
@@ -122,6 +123,25 @@ function Row({ project, index, open, onToggle }: { project: Project; index: numb
                 </div>
               )}
             </div>
+            {project.images && (
+              <div className={`grid gap-6 pb-12 md:pl-[8.5%] ${project.images.length > 1 ? "md:grid-cols-2" : "md:max-w-3xl"}`}>
+                {project.images.map((img) => (
+                  <figure key={img.src} className={img.width / img.height > 2 ? "md:col-span-2" : undefined}>
+                    <div className="overflow-hidden rounded-sm border border-[var(--line)] bg-[var(--bg-raised)]">
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        width={img.width}
+                        height={img.height}
+                        sizes="(min-width: 768px) 45vw, 92vw"
+                        className="h-auto w-full transition-transform duration-700 ease-out hover:scale-[1.03]"
+                      />
+                    </div>
+                    <figcaption className="mt-3 text-sm text-[var(--muted)]">{img.caption}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

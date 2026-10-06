@@ -20,6 +20,14 @@ export interface Metric {
   label: string;
 }
 
+export interface ProjectImage {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -33,6 +41,7 @@ export interface Project {
   detail: string;
   stack: string[];
   metrics?: Metric[];
+  images?: ProjectImage[];
   note?: string;
   /** Built with coding agents; architecture, validation, tests and review are mine. */
   agents?: boolean;
@@ -87,6 +96,10 @@ export const projects: Project[] = [
     title: "EASY edge node",
     period: "2025 — 2026",
     kind: "Edge AI · Research",
+    images: [
+      { src: "/projects/easy-hardware.jpg", alt: "The EASY prototype: a Raspberry Pi 4 with a camera HAT, two RGB cameras, a thermal sensor and a cooling fan", caption: "The laboratory prototype used for every measurement: Raspberry Pi 4, two RGB cameras, FLIR Lepton thermal sensor.", width: 1600, height: 1200 },
+      { src: "/projects/easy-node.jpg", alt: "The integrated node design study: cameras and thermal sensor on a rigid bar above an enclosed Raspberry Pi", caption: "Target integrated node, a design study with a rigid sensor mount. It was not used for the reported measurements.", width: 1600, height: 1200 },
+    ],
     summary:
       "A low-cost edge platform on a Raspberry Pi 4 with stereo RGB and an on-demand FLIR Lepton thermal sensor, running ONNX inference on the CPU and turning maritime observations into governed, reproducible data.",
     context:
@@ -131,6 +144,11 @@ export const projects: Project[] = [
     title: "GLOBO modernisation",
     period: "2024 — 2025",
     kind: "HPC · Scientific computing",
+    images: [
+      { src: "/projects/globo-communication.png", alt: "Diagram of GLOBO communication before, with point-to-point messages, and after, with MPI collective operations", caption: "Before and after: point-to-point exchanges replaced by collective operations.", width: 1600, height: 991 },
+      { src: "/projects/globo-scaling.png", alt: "Line chart of best execution time per resolution, collective against point-to-point", caption: "Best execution time per resolution. At 39 km the collective version needs 3,939 s against 6,736 s.", width: 1600, height: 922 },
+      { src: "/projects/globo-pressure.png", alt: "Two world maps of surface pressure simulated by GLOBO at 312 km and 39 km resolution", caption: "Surface pressure simulated by GLOBO at 312 km (left) and 39 km (right).", width: 1800, height: 771 },
+    ],
     summary:
       "Refactoring the communication layer of a global weather model so it scales across nodes, and preparing it for GPUs and the cloud.",
     context:
@@ -294,6 +312,9 @@ export const projects: Project[] = [
     title: "Diachronic text analysis",
     period: "Open source",
     kind: "NLP",
+    images: [
+      { src: "/projects/diachronic-dispersion.png", alt: "Line chart of the semantic dispersion of nearest neighbours across decades from 1900 to 2010", caption: "Semantic dispersion of nearest neighbours across decades, measured as cosine similarity.", width: 1280, height: 960 },
+    ],
     summary:
       "How word meaning drifts across a century, measured with CBOW embeddings trained per decade on Google Books n-grams.",
     context:
