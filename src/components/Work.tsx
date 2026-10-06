@@ -14,17 +14,18 @@ function Counter({ metric }: { metric: Metric }) {
   const inView = useInView(ref, { once: true });
   const reduce = useReducedMotion();
   const d = metric.decimals ?? 0;
-  const [text, setText] = useState((reduce ? metric.value : 0).toFixed(d));
+  const fmt = (v: number) => v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const [text, setText] = useState(fmt(reduce ? metric.value : 0));
 
   useEffect(() => {
     if (!inView || reduce) {
-      if (reduce) setText(metric.value.toFixed(d));
+      if (reduce) setText(fmt(metric.value));
       return;
     }
     const controls = animate(0, metric.value, {
       duration: 1.6,
       ease,
-      onUpdate: (v) => setText(v.toFixed(d)),
+      onUpdate: (v) => setText(fmt(v)),
     });
     return () => controls.stop();
   }, [inView, reduce, metric.value, d]);
@@ -79,9 +80,19 @@ function Row({ project, index, open, onToggle }: { project: Project; index: numb
             className="overflow-hidden"
           >
             <div className="grid gap-10 pb-12 md:grid-cols-12">
-              <div className="md:col-span-5 md:col-start-2">
+              <div className={project.metrics ? "md:col-span-6 md:col-start-2" : "md:col-span-8 md:col-start-2"}>
                 <p className="text-lg leading-relaxed">{project.summary}</p>
-                <p className="mt-5 leading-relaxed text-[var(--muted)]">{project.detail}</p>
+                <p className="mt-5 leading-relaxed text-[var(--muted)]">{project.context}</p>
+                <p className="eyebrow mb-3 mt-8">What I did</p>
+                <ul className="space-y-3">
+                  {project.highlights.map((h) => (
+                    <li key={h} className="relative pl-5 leading-relaxed">
+                      <span aria-hidden className="absolute left-0 top-[0.7em] h-px w-3 bg-[var(--accent)]" />
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+                {project.detail && <p className="mt-6 leading-relaxed text-[var(--muted)]">{project.detail}</p>}
                 {project.note && <p className="mt-5 border-l-2 border-[var(--accent)] pl-4 text-sm">{project.note}</p>}
                 {project.agents && (
                   <p className="mt-4 text-sm text-[var(--muted)]">
@@ -104,7 +115,7 @@ function Row({ project, index, open, onToggle }: { project: Project; index: numb
                 )}
               </div>
               {project.metrics && (
-                <div className="grid grid-cols-2 gap-x-6 gap-y-8 self-start md:col-span-5 md:col-start-8">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-8 self-start md:col-span-4 md:col-start-9">
                   {project.metrics.map((m) => (
                     <Counter key={m.label} metric={m} />
                   ))}

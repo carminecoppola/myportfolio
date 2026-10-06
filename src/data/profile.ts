@@ -26,6 +26,10 @@ export interface Project {
   period: string;
   kind: string;
   summary: string;
+  /** Where the work sits: project, partners, motivation. */
+  context: string;
+  /** What I actually did, one line each. */
+  highlights: string[];
   detail: string;
   stack: string[];
   metrics?: Metric[];
@@ -85,8 +89,16 @@ export const projects: Project[] = [
     kind: "Edge AI · Research",
     summary:
       "A low-cost edge platform on a Raspberry Pi 4 with stereo RGB and an on-demand FLIR Lepton thermal sensor, running ONNX inference on the CPU and turning maritime observations into governed, reproducible data.",
+    context:
+      "Part of EASY (Environmental Awareness by the Sea and beYond) at the University of Naples Parthenope, supervised by Prof. Raffaele Montella. The question: can a cheap embedded node give citizen-contributed maritime observations a reproducible, governable path from sensor to data?",
+    highlights: [
+      "Architected a service-oriented runtime in which live and replayed sources share one code path, with a React dashboard and REST API on top.",
+      "Profiled the pipeline stage by stage and found that persistence and request coordination, not the model, dominated latency.",
+      "Found sequence-level leakage in my own first YOLOv8n split (mAP50 0.94), documented it and rebuilt the split leak-free: 0.627 deployed, 0.678 at 960 px.",
+      "Kept every observation traceable: source, session, capture time, device state, model configuration and per-stage timings.",
+    ],
     detail:
-      "A service-oriented runtime lets live and replayed sources share one code path, with a React dashboard and REST API on top. Profiling the pipeline stage by stage showed that persistence and request coordination, not the model, dominated latency. My first YOLOv8n split leaked frames between train and test (mAP50 0.94); I documented it and rebuilt the split leak-free. All figures are laboratory results on the prototype; thermal fusion and field deployment are next. Parts were built with Codex and Claude Code.",
+      "All figures are laboratory results on the prototype; thermal fusion and field deployment are the next step.",
     stack: ["Python", "YOLOv8", "ONNX Runtime", "Raspberry Pi", "FLIR Lepton", "React", "REST", "CI"],
     metrics: [
       { value: 2, suffix: " h", label: "concurrent RGB and thermal acquisition" },
@@ -120,13 +132,26 @@ export const projects: Project[] = [
     period: "2024 — 2025",
     kind: "HPC · Scientific computing",
     summary:
-      "Refactoring legacy Fortran in the GLOBO atmospheric model so it ports across HPC environments and is ready for GPUs.",
-    detail:
-      "Part of GLOwPP, with ISAC-CNR. I replaced point-to-point MPI calls with collective routines to cut inter-node synchronisation overhead, identified hotspots and restructured data movement for OpenACC, and built validation and regression workflows that guard numerical correctness.",
+      "Refactoring the communication layer of a global weather model so it scales across nodes, and preparing it for GPUs and the cloud.",
+    context:
+      "GLOBO is the global, hydrostatic atmospheric model of CNR-ISAC, derived from BOLAM. It produces daily 7-day forecasts and a weekly 40-member ensemble for sub-seasonal prediction. GLOWPP (GLObal Weather model Prototype now and Production in the future) is led by the University of Naples Parthenope with ISAC-CNR, FIDES Consulting and ITDM, to make it run on HPC clusters and on cloud platforms.",
+    highlights: [
+      "Replaced root-driven MPI_Isend/MPI_Irecv loops followed by MPI_Wait with MPI_Bcast, MPI_Scatterv, MPI_Sendrecv and MPI_Reduce, removing sequential bottlenecks and simplifying the code.",
+      "Measured four resolutions from 312 km to 39 km. At coarse grids both versions match; at 78 km the collectives stay stable up to 192 processes; at 39 km the run drops from 6,736 s to 3,939 s.",
+      "Planned dynamic memory allocation and introduced the first OpenACC directives, after profiling the hotspots and restructuring data movement.",
+      "Built validation and regression workflows so numerical results stay correct after every refactor.",
+    ],
+    detail: "Presented as a poster at IEEE eScience 2025 in Chicago.",
     stack: ["Fortran", "MPI", "OpenACC", "SLURM", "Profiling"],
+    metrics: [
+      { value: 40, suffix: "%", label: "shorter runtime at 39 km, multi-node" },
+      { value: 3939, suffix: " s", label: "high-resolution run, down from 6,736 s" },
+      { value: 192, label: "processes with stable scaling at 78 km" },
+    ],
     links: [
+      { label: "GLOWPP project", href: "https://www.glowpp-project.org/", external: true },
       { label: "Source", href: "https://git.isac.cnr.it/montella/globone-glowpp", external: true },
-      { label: "Paper", href: "https://ieeexplore.ieee.org/document/11181550", external: true },
+      { label: "Poster (PDF)", href: "/publication/eScience25_POSTER_Global_Weather_model_Prototype_now_and_Production_in_the_future.pdf", download: true },
     ],
   },
   {
@@ -135,10 +160,23 @@ export const projects: Project[] = [
     period: "2024 — 2025",
     kind: "LLM evaluation · Research",
     summary:
-      "A closed loop in which language models generate programming exercises, solve and evaluate them, and iterate on difficulty and correctness.",
+      "What happens when language models solve programming exercises written by other language models? A closed-loop benchmark that generates, solves and scores them.",
+    context:
+      "Part of FGPE++ (Gamified Programming Learning at Scale), an Erasmus+ project coordinated by the University of Szczecin with Parthenope, Porto, Kaunas and Aalborg. Earlier studies tested models as generators or as solvers; this one tests both roles together.",
+    highlights: [
+      "Built the pipeline in which one model generates an exercise with a structured prompt and another writes, compiles and runs the solution, then compares the output with the generator's expected result.",
+      "Ran four models (GPT-4, DeepSeek-R1, Qwen-Turbo, Gemini 2.0 Flash) over four rotations of 20 exercises each, solved in Python, Java and JavaScript.",
+      "Scored every generator and solver pair with syntax error, logical error and total error rates.",
+      "Found that every model stayed below 10% total error, with ChatGPT leading as generator (5.9%) and as solver (6.8%); Gemini was the weakest generator (8.6%) and Qwen the weakest solver (8.9%).",
+    ],
     detail:
-      "Static analysis, test-case execution and scoring check each exercise. I benchmarked ChatGPT, DeepSeek, Qwen and Gemini on Python, Java and JavaScript. Presented at ISD 2025 in Belgrade.",
-    stack: ["Python", "LLMs", "Static analysis", "Benchmarking"],
+      "The paper is explicit about limits: no human review of the exercises and no systematic bias analysis yet. Presented at ISD 2025 in Belgrade.",
+    stack: ["Python", "LLM APIs", "Prompt design", "Static analysis", "Benchmarking"],
+    metrics: [
+      { value: 4, label: "language models, each as generator and solver" },
+      { value: 3, label: "programming languages" },
+      { value: 5.9, decimals: 1, suffix: "%", label: "total error rate of the best generator" },
+    ],
     links: [
       { label: "Repository", href: "https://github.com/carminecoppola/Certamen-AI-Exercises", external: true },
       {
@@ -146,6 +184,7 @@ export const projects: Project[] = [
         href: "/publication/AIED2025_Certamen_Artificialis_Intelligentia__evaluating_how_AI_behaves_in_solving_AI_generated_gamified_programming_exercises.pdf",
         download: true,
       },
+      { label: "Poster (PDF)", href: "/publication/Poster_Certamen_Artificialis_Intelligentia.pdf", download: true },
     ],
   },
   {
@@ -154,13 +193,22 @@ export const projects: Project[] = [
     period: "2026",
     kind: "Reinforcement learning · Vision",
     summary:
-      "A Double-DQN agent in PyTorch that learns short, interpretable sequences of image-processing actions.",
+      "A Double-DQN agent in PyTorch that learns short, interpretable sequences of image-processing actions to restore degraded underwater photos.",
+    context:
+      "An independent implementation inspired by earlier underwater reinforcement-learning work, trained on paired images from the UIEB dataset. The policy sees the current image and the step number and picks one of four deterministic actions: white balance, contrast up, sharpen, or stop.",
+    highlights: [
+      "Designed the environment, reward shaping and acceptance gates, and checkpointed on mean PSNR gain instead of reward.",
+      "Ran five controlled experiments, each changing one thing: a longer horizon helped in-domain, an eight-action set lost too much quality, and global LAB statistics hurt out-of-domain results. I rejected the last two.",
+      "Compared the policy against fixed baselines and analysed which actions it chooses.",
+      "Evaluated out of domain on 60 challenging images with no reference. The deltas are negative, and I report them as unresolved.",
+    ],
     detail:
-      "On paired in-domain images the official run gains 1.55 dB PSNR on average, with SSIM 0.83, and passes its behavioural acceptance gates. Robustness out of domain is negative, and I report it as unresolved. Developed with Codex and Claude Code.",
-    stack: ["Python", "PyTorch", "DDQN", "Gymnasium"],
+      "Reproducible by design: each run stores its configuration, splits, checkpoints, evaluations and a generated report, with unit tests, linting and Slurm launchers.",
+    stack: ["Python", "PyTorch", "DDQN", "Gymnasium", "Slurm"],
     metrics: [
       { value: 1.55, decimals: 2, suffix: " dB", label: "mean PSNR gain, in-domain" },
-      { value: 0.83, decimals: 2, label: "SSIM" },
+      { value: 0.83, decimals: 2, label: "output SSIM" },
+      { value: 5, label: "single-change experiments" },
     ],
     agents: true,
     links: [
@@ -168,28 +216,23 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "api-gateway",
-    title: "UniParthenope API v3 gateway",
-    period: "2026",
-    kind: "Backend",
-    summary:
-      "A backend gateway built from scratch that keeps all 91 operations of the legacy API unchanged, so the existing app does not notice the refactoring.",
-    detail:
-      "Pre-deploy security audit, hardening and deployment on the cluster, with an automated test suite. The repository is private. Developed with Codex and Claude Code.",
-    stack: ["API design", "Security audit", "Testing", "Deployment"],
-    agents: true,
-    links: [],
-  },
-  {
     id: "uniparthenope",
     title: "app@uniparthenope",
     period: "2024 — 2026",
     kind: "Mobile",
     summary:
-      "The university's official student app for Android and iOS: careers, courses, fees, weather and biometric login.",
-    detail:
-      "Flutter app published as an official institutional release. In 2026 I modernised the whole codebase with Codex and Claude Code, backed by unit tests for authentication and career state.",
-    stack: ["Flutter", "Dart", "REST", "Testing"],
+      "The university's official app for students and faculty, on Android and iOS: career, courses, fees, exam booking, calendar, room booking and weather.",
+    context:
+      "Built in Flutter with Provider for state, against the university's REST services. Published as an official institutional release. Developed with Raffaele Montella.",
+    highlights: [
+      "Biometric sign-in with local authentication and secure credential storage.",
+      "Exam booking flow, calendar, fee status with receipt download, and a digital student pass.",
+      "Faculty tools for rooms, events and office hours, plus students with more than one career.",
+      "In 2026 I modernised the whole codebase, redesigning the student and faculty interface and adding 30 test files that cover authentication, booking, calendar, fees and localisation.",
+    ],
+    detail: "",
+    stack: ["Flutter", "Dart", "Provider", "REST", "Testing"],
+    metrics: [{ value: 30, label: "test files, from auth to booking" }],
     agents: true,
     links: [
       { label: "App Store", href: "https://apps.apple.com/us/app/app-uniparthenope/id1524040409", external: true },
@@ -201,16 +244,48 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "api-gateway",
+    title: "UniParthenope API v3 gateway",
+    period: "2026",
+    kind: "Backend",
+    summary:
+      "A backend gateway that gives the university app a new /v3 API while keeping all 91 operations of the legacy API unchanged, so existing clients do not notice.",
+    context:
+      "A FastAPI service in Docker behind a reverse proxy. It exposes the new v3 namespace and mirrors the legacy routes at the same paths, forwarding them to the real upstream.",
+    highlights: [
+      "Built it from scratch, with a contract that preserves every legacy operation.",
+      "Ran a pre-deploy security audit and hardened it before deployment on the cluster.",
+      "Added an automated test suite, and used the gateway to fix real problems of the app, such as exam bookings, receipts and profile photos.",
+    ],
+    detail: "The repository is private.",
+    stack: ["FastAPI", "Docker", "API design", "Security audit", "Testing"],
+    metrics: [{ value: 91, label: "legacy operations kept intact" }],
+    agents: true,
+    links: [],
+  },
+  {
     id: "hiwefai",
     title: "Hi-WeFAI tutorial",
     period: "2025",
     kind: "AI · Hydrometeorology",
     summary:
-      "The operational tutorial for an AI nowcasting workflow, from radar data to flood warnings.",
-    detail:
-      "Covers radar ingestion, transformer-based precipitation nowcasting, coupling with the PERFECT-M hydrological model, and reproducible Docker and HPC deployment guides.",
-    stack: ["Python", "Nowcasting", "Docker", "HPC"],
+      "The operational tutorial for an AI nowcasting workflow, from radar data to flood-risk maps, with reproducible Docker deployment.",
+    context:
+      "Hi-WeFAI (High-performance computing for Weather nowcasting with Federated Artificial Intelligence) combines HPC, federated AI and heterogeneous sensors, X-band radar and weather stations, to improve short-term rain forecasting and flood nowcasting. The pilot area is the metropolitan area of Naples.",
+    highlights: [
+      "Wrote the end-to-end guide: radar ingestion, a transformer-based precipitation model, coupling with the PERFECT-M hydrological model, and warning generation.",
+      "Packaged it in Docker with three cooperating services: a WebSocket server, an inference client and a download server.",
+      "Documented the pipeline: 36 radar images become 18 inputs, 6 predictions and 12 NetCDF flood-risk outputs, in about 43 minutes.",
+      "Specified the data and the model weights, about 8 GB of geospatial layers, and the resources needed to reproduce the run.",
+    ],
+    detail: "Written so a researcher can reproduce the workflow on an HPC host without help.",
+    stack: ["Python", "Docker", "Nowcasting", "NetCDF", "HPC"],
+    metrics: [
+      { value: 43, suffix: " min", label: "from radar images to flood-risk maps" },
+      { value: 12, label: "NetCDF flood-risk outputs per run" },
+    ],
     links: [
+      { label: "Hi-WeFAI project", href: "https://www.hiwefai-project.org/", external: true },
       { label: "Tutorial", href: "https://github.com/carminecoppola/Hi-WeFAI_tutorial", external: true },
     ],
   },
@@ -220,9 +295,17 @@ export const projects: Project[] = [
     period: "Open source",
     kind: "NLP",
     summary:
-      "Semantic drift of Italian across decades: CBOW embeddings per decade on Google Books n-grams, aligned with Procrustes.",
-    detail: "Training runs on SLURM; drift metrics and PCA and t-SNE views make the shifts readable.",
-    stack: ["Python", "PyTorch", "SLURM"],
+      "How word meaning drifts across a century, measured with CBOW embeddings trained per decade on Google Books n-grams.",
+    context:
+      "The pipeline covers 1900 to 2019. The textbook example is “computer”: a person who calculates in the 1930s, an electronic device by the 1990s.",
+    highlights: [
+      "Preprocessing and vocabulary building, then one CBOW model per decade, trained on SLURM.",
+      "Embedding spaces aligned with orthogonal Procrustes, using anchor words.",
+      "Local and global drift from cosine similarity, plus trajectories and nearest neighbours.",
+      "PCA and t-SNE views, documented step by step.",
+    ],
+    detail: "A course project with a protected main branch and pull requests.",
+    stack: ["Python", "PyTorch", "scikit-learn", "SLURM"],
     links: [
       { label: "Repository", href: "https://github.com/carminecoppola/diachronic_text_analysis", external: true },
     ],
@@ -232,9 +315,15 @@ export const projects: Project[] = [
     title: "PySpark SMS spam classifier",
     period: "Open source",
     kind: "Big data",
-    summary: "A scalable spam classifier built as PySpark ML pipelines and benchmarked on a Hadoop cluster.",
-    detail: "Deployed and benchmarked on a Hadoop cluster to compare how the pipeline scales.",
-    stack: ["PySpark", "Hadoop", "ML pipelines"],
+    summary: "A scalable spam classifier built as Spark ML pipelines and deployed on a Hadoop cluster.",
+    context:
+      "Billions of SMS messages are sent every day, so spam filtering has to scale. Inspired by an open Spark course, it uses HDFS and YARN for storage and resources, and MLlib for the model.",
+    highlights: [
+      "A one-command setup script that unpacks the project, creates the environment and asks whether to run plain Python or spark-submit.",
+      "Tested on a managed Hadoop and Spark cluster.",
+    ],
+    detail: "A course project on distributed machine learning.",
+    stack: ["PySpark", "MLlib", "Hadoop", "YARN"],
     links: [
       { label: "Repository", href: "https://github.com/carminecoppola/pyspark-sms-spam-detector", external: true },
     ],
@@ -244,9 +333,16 @@ export const projects: Project[] = [
     title: "OpenUsage for VS Code",
     period: "Open source",
     kind: "Developer tools",
-    summary: "A VS Code extension that shows spend, limits and usage of AI coding tools.",
-    detail: "Ships with CI packaging.",
-    stack: ["TypeScript", "VS Code API", "CI"],
+    summary: "A VS Code extension that shows spend, limits and usage of AI coding tools without leaving the editor.",
+    context:
+      "OpenUsage runs in the macOS menu bar; many developers live in VS Code. The extension reads its local usage endpoint and shows it where the work happens.",
+    highlights: [
+      "Status bar summary, plus an executive dashboard and a compact one.",
+      "Provider tabs, limit bars, reset countdowns and usage trends.",
+      "Configurable endpoint and refresh interval, packaged as a VSIX by GitHub Actions.",
+    ],
+    detail: "It does not collect data itself: it needs the OpenUsage app running.",
+    stack: ["TypeScript", "VS Code API", "GitHub Actions"],
     links: [
       { label: "Repository", href: "https://github.com/carminecoppola/openusage-vscode-monitor", external: true },
     ],
